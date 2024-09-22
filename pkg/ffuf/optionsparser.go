@@ -624,6 +624,46 @@ func ConfigFromOptions(parseOpts *ConfigOptions, ctx context.Context, cancel con
 	return &conf, errs.ErrorOrNil()
 }
 
+func loadProxiesFromFile(filePath string) ([]string, error) {
+    file, err := os.Open(filePath)
+    if err != nil {
+        return nil, err
+    }
+    defer file.Close()
+
+    var proxies []string
+    scanner := bufio.NewScanner(file)
+    for scanner.Scan() {
+        line := scanner.Text()
+        parts := strings.Split(line, ":")
+        if len(parts) < 2 {
+            return nil, fmt.Errorf("Invalid proxy format in line: %s", line)
+        }
+        ip := parts[0]
+        port := parts[1]
+
+        var proxyURL string
+        if len(parts) == 2 {
+            proxyURL = fmt.Sprintf("http://%s:%s", ip, port) // No auth
+        } else if len(parts) == 4 {
+            user := parts[2]
+            pass := parts[3]
+            proxyURL = fmt.Sprintf("http://%s:%s@%s:%s", user, pass, ip, port) // With auth
+        } else {
+            return nil, fmt.Errorf("Invalid proxy format in line: %s", line)
+        }
+
+        proxies = append(proxies, proxyURL)
+    }
+
+    if err := scanner.Err(); err != nil {
+        return nil, err
+    }
+
+    return proxies, nil
+}
+
+
 func parseRawRequest(parseOpts *ConfigOptions, conf *Config) error {
 	conf.RequestFile = parseOpts.Input.Request
 	conf.RequestProto = parseOpts.Input.RequestProto
