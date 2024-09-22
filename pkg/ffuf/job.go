@@ -394,6 +394,7 @@ func (j *Job) ffufHash(pos int) []byte {
 
 func (j *Job) runTask(input map[string][]byte, position int, retried bool) {
 	basereq := j.queuejobs[j.queuepos-1].req
+	log.Printf("%s", j.queuejobs[j.queuepos-1].req)
 	req, err := j.Runner.Prepare(input, &basereq)
 	req.Position = position
 	if err != nil {
