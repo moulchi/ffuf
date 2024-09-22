@@ -35,7 +35,6 @@ func NewSimpleRunner(conf *ffuf.Config, replay bool) ffuf.RunnerProvider {
 	var simplerunner SimpleRunner
 	proxyURL := http.ProxyFromEnvironment
 	customProxy := ""
-	tp := ""
 	
 	if replay {
 		customProxy = conf.ReplayProxyURL
