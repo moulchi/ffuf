@@ -15,7 +15,7 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
-	"math/rand"
+	//"math/rand"
 	"time"
 
 	"github.com/ffuf/ffuf/v2/pkg/ffuf"
