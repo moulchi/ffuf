@@ -430,13 +430,20 @@ func ConfigFromOptions(parseOpts *ConfigOptions, ctx context.Context, cancel con
 	}
 
 	// Verify proxy url format
-	if len(parseOpts.HTTP.ProxyURL) > 0 {
-		proxies, err := loadProxiesFromFile(parseOpts.HTTP.ProxyListFilePath)
-		    if err != nil {
-		        errs.Add(fmt.Errorf("Could not load proxies from file: %v", err))
-		    } else {
-		        conf.Proxies = proxies
-		    }
+	if len(parseOpts.HTTP.ProxyListFilePath) > 0 {
+	    proxies, err := loadProxiesFromFile(parseOpts.HTTP.ProxyListFilePath)
+	    if err != nil {
+	        errs.Add(fmt.Errorf("Could not load proxies from file: %v", err))
+	    } else {
+	        conf.Proxies = proxies
+	    }
+	} else if len(parseOpts.HTTP.ProxyURL) > 0 {
+		u, err := url.Parse(parseOpts.HTTP.ProxyURL)
+		if err != nil || u.Opaque != "" || (u.Scheme != "http" && u.Scheme != "https" && u.Scheme != "socks5") {
+			errs.Add(fmt.Errorf("Bad proxy url (-x) format. Expected http, https or socks5 url"))
+		} else {
+			conf.ProxyURL = parseOpts.HTTP.ProxyURL
+		}
 	}
 
 	// Verify replayproxy url format
