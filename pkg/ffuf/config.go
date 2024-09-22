@@ -44,6 +44,8 @@ type Config struct {
 	OutputSkipEmptyFile       bool                  `json:"OutputSkipEmptyFile"`
 	ProgressFrequency         int                   `json:"-"`
 	ProxyURL                  string                `json:"proxyurl"`
+	ProxyListFilePath         string                `json:"proxylistfile"`
+    	Proxies                   []string              `json:"proxies"`
 	Quiet                     bool                  `json:"quiet"`
 	Rate                      int64                 `json:"rate"`
 	Raw                       bool                  `json:"raw"`
