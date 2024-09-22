@@ -15,6 +15,7 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+	"math/rand"
 	"time"
 
 	"github.com/ffuf/ffuf/v2/pkg/ffuf"
@@ -39,6 +40,7 @@ func NewSimpleRunner(conf *ffuf.Config, replay bool) ffuf.RunnerProvider {
 	if replay {
 		customProxy = conf.ReplayProxyURL
 	} else if len(conf.Proxies) > 0 {
+	    rand.Seed(time.Now().UnixNano())
 	    randomIndex := rand.Intn(len(conf.Proxies))
 	    customProxy = conf.Proxies[randomIndex]
 	} else {
