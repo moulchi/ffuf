@@ -51,6 +51,7 @@ func NewSimpleRunner(conf *ffuf.Config, replay bool) ffuf.RunnerProvider {
 			proxyURL = http.ProxyURL(pu)
 		}
 	}
+	print(proxyURL);
 	cert := []tls.Certificate{}
 
 	if conf.ClientCert != "" && conf.ClientKey != "" {
