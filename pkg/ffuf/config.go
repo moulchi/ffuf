@@ -109,6 +109,8 @@ func NewConfig(ctx context.Context, cancel context.CancelFunc) Config {
 	conf.Noninteractive = false
 	conf.ProgressFrequency = 125
 	conf.ProxyURL = ""
+	conf.ProxyListFilePath = ""
+	conf.Proxies = []string{}
 	conf.Quiet = false
 	conf.Rate = 0
 	conf.Raw = false
