@@ -33,6 +33,8 @@ type HTTPOptions struct {
 	IgnoreBody        bool     `json:"ignore_body"`
 	Method            string   `json:"method"`
 	ProxyURL          string   `json:"proxy_url"`
+	ProxyListFilePath string   `json:"proxylistfile"`
+    	Proxies           []string `json:"proxies"`
 	Raw               bool     `json:"raw"`
 	Recursion         bool     `json:"recursion"`
 	RecursionDepth    int      `json:"recursion_depth"`
@@ -149,6 +151,8 @@ func NewConfigOptions() *ConfigOptions {
 	c.HTTP.IgnoreBody = false
 	c.HTTP.Method = ""
 	c.HTTP.ProxyURL = ""
+	c.HTTP.ProxyListFilePath = ""
+	c.HTTP.Proxies = []string{}
 	c.HTTP.Raw = false
 	c.HTTP.Recursion = false
 	c.HTTP.RecursionDepth = 0
@@ -427,12 +431,12 @@ func ConfigFromOptions(parseOpts *ConfigOptions, ctx context.Context, cancel con
 
 	// Verify proxy url format
 	if len(parseOpts.HTTP.ProxyURL) > 0 {
-		u, err := url.Parse(parseOpts.HTTP.ProxyURL)
-		if err != nil || u.Opaque != "" || (u.Scheme != "http" && u.Scheme != "https" && u.Scheme != "socks5") {
-			errs.Add(fmt.Errorf("Bad proxy url (-x) format. Expected http, https or socks5 url"))
-		} else {
-			conf.ProxyURL = parseOpts.HTTP.ProxyURL
-		}
+		proxies, err := loadProxiesFromFile(parseOpts.HTTP.ProxyListFilePath)
+		    if err != nil {
+		        errs.Add(fmt.Errorf("Could not load proxies from file: %v", err))
+		    } else {
+		        conf.Proxies = proxies
+		    }
 	}
 
 	// Verify replayproxy url format
